@@ -1,0 +1,54 @@
+def median_of_medians(arr, k):
+    if k > 0 and k <= len(arr):
+        return select(arr, 0, len(arr) - 1, k)
+    else:
+        return None
+
+def select(arr, left, right, k):
+    # Divide the array into groups of 5 and find median of each group
+    n = right - left + 1
+    if n <= 5:
+        return sorted(arr[left:right + 1])[k - 1]
+    
+    medians = []
+    for i in range(0, n, 5):
+        median_index = left + i + n % 5 // 2
+        median_value = select(arr, left + i, min(left + i + 4, right), (n % 5 + 1) // 2)
+        medians.append(median_value)
+    
+    # Find the median of medians
+    pivot = select(medians, 0, len(medians) - 1, len(medians) // 2 + 1)
+    
+    # Partition the array around the pivot
+    position = partition(arr, left, right, pivot)
+    
+    # Check the position of the pivot
+    if position - left == k - 1:
+        return arr[position]
+    elif position - left > k - 1:
+        return select(arr, left, position - 1, k)
+    else:
+        return select(arr, position + 1, right, k - position + left - 1)
+
+def partition(arr, left, right, pivot):
+    # Move pivot to end
+    for i in range(left, right):
+        if arr[i] == pivot:
+            arr[i], arr[right] = arr[right], arr[i]
+            break
+    
+    # Standard partition using Lomuto scheme
+    i = left
+    for j in range(left, right):
+        if arr[j] <= pivot:
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+    arr[i], arr[right] = arr[right], arr[i]
+    return i
+
+# Example usage:
+arr = [12, 3, 5, 7, 19]
+k = 2
+print("Input Array:", arr)
+print("k:", k)
+print("k-th smallest element:", median_of_medians(arr, k))
