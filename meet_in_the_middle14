@@ -1,0 +1,35 @@
+from itertools import combinations
+
+def meet_in_the_middle(arr, exact_sum):
+    n = len(arr)
+    half = n // 2
+    
+    # Split array into two halves
+    left_part = arr[:half]
+    right_part = arr[half:]
+    
+    # Function to generate all subset sums
+    def generate_subset_sums(part):
+        subset_sums = set()
+        for i in range(len(part) + 1):
+            for comb in combinations(part, i):
+                subset_sums.add(sum(comb))
+        return subset_sums
+
+    # Generate subset sums for both halves
+    left_sums = generate_subset_sums(left_part)
+    right_sums = generate_subset_sums(right_part)
+    
+    # Check if any combination of subset sums equals exact_sum
+    for left_sum in left_sums:
+        if (exact_sum - left_sum) in right_sums:
+            return True
+    
+    return False
+
+# Example usage:
+arr = [1, 3, 9, 2, 7, 12]
+exact_sum = 15
+print("Input Array:", arr)
+print("Exact Sum:", exact_sum)
+print("Is there a subset with the exact sum?:", meet_in_the_middle(arr, exact_sum))
