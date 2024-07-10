@@ -1,0 +1,54 @@
+from itertools import combinations
+import bisect
+
+def meet_in_the_middle(arr, target):
+    n = len(arr)
+    half = n // 2
+    
+    # Split array into two halves
+    left_part = arr[:half]
+    right_part = arr[half:]
+    
+    # Function to generate all subset sums
+    def generate_subset_sums(part):
+        subset_sums = []
+        for i in range(len(part) + 1):
+            for comb in combinations(part, i):
+                subset_sums.append(sum(comb))
+        return subset_sums
+
+    # Generate subset sums for both halves
+    left_sums = generate_subset_sums(left_part)
+    right_sums = generate_subset_sums(right_part)
+    
+    # Sort the right sums for binary search
+    right_sums.sort()
+    
+    closest_sum = float('inf')
+    best_combination = (None, None)
+    
+    # Find the closest sum by checking each left_sum and the closest right_sum
+    for left_sum in left_sums:
+        remaining = target - left_sum
+        pos = bisect.bisect_left(right_sums, remaining)
+        
+        if pos < len(right_sums):
+            current_sum = left_sum + right_sums[pos]
+            if abs(target - current_sum) < abs(target - closest_sum):
+                closest_sum = current_sum
+                best_combination = (left_sum, right_sums[pos])
+        
+        if pos > 0:
+            current_sum = left_sum + right_sums[pos - 1]
+            if abs(target - current_sum) < abs(target - closest_sum):
+                closest_sum = current_sum
+                best_combination = (left_sum, right_sums[pos - 1])
+    
+    return closest_sum
+
+# Example usage:
+arr = [45, 34, 4, 12, 5, 2]
+target = 42
+print("Input Array:", arr)
+print("Target Sum:", target)
+print("Closest Subset Sum:", meet_in_the_middle(arr, target))
