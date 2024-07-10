@@ -1,0 +1,33 @@
+def four_sum_count(A, B, C, D):
+    sum_count = {}
+    
+    # Count occurrences of sums of A[i] + B[j]
+    for a in A:
+        for b in B:
+            sum_ab = a + b
+            if sum_ab in sum_count:
+                sum_count[sum_ab] += 1
+            else:
+                sum_count[sum_ab] = 1
+    
+    # Count occurrences of sums of -(C[k] + D[l]) to find matches
+    count = 0
+    for c in C:
+        for d in D:
+            sum_cd = -(c + d)
+            if sum_cd in sum_count:
+                count += sum_count[sum_cd]
+    
+    return count
+
+# Example usage:
+A = [1, 2]
+B = [-2, -1]
+C = [-1, 2]
+D = [0, 2]
+print("Input:")
+print("A =", A)
+print("B =", B)
+print("C =", C)
+print("D =", D)
+print("Output:", four_sum_count(A, B, C, D))
